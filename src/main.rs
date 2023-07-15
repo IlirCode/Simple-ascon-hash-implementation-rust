@@ -1,4 +1,4 @@
-#![allow(unused)]
+#![allow(unused)] // compiler doesn't complain about unused variables and mut anymore -> remove for release
 
 use std::io;
 
@@ -56,32 +56,6 @@ fn main() {
     let mut message : Vec<u64> = Vec::new();
 
     // assumed that the message is a string in UTF-8 format
-
-    /*In this code, we first create a mutable input string to store the user's input. Then, we use io::stdin().read_line(&mut input) to read a line from the standard input and store it in the input string.
-
-    Next, we split the line into individual whitespace-separated numbers using split_whitespace(), which returns an iterator over these numbers as strings. We then use map() to parse each number string into a u64 value using parse().
-
-    Finally, we use collect() to collect the parsed numbers into a vector of type Vec<u64>. The resulting vector is assigned to the numbers variable.
-
-    You can modify the code according to your specific requirements and add error handling as needed. */
-
-
-    // preparing the message blocks
-
-    /*let mut input = String::new();
-    io::stdin().read_line(&mut input).expect("Failed to read input");
-
-    let output_blocks = ascon_hash(&input);
-    
-    print!("hash is ");
-    for i in 0 .. 4 {
-        print!("{:x}", output_blocks[i]);
-    }
-    print!("\n");
-    // maybe want the output_blocks as a 
-*/
-
-    // for testing cause vs code doesn#t allow me to use hex in structs
     
   
         // numbers taken from the test for the official permutation
