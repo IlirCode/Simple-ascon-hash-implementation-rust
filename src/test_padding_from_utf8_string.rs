@@ -48,7 +48,8 @@ mod tests_strings {
 #[cfg(test)]
 mod test_padding {
     use crate::{vec_u8_to_u64_and_pad, StringToU8};
-
+    // UTF-8 can be 1 to 4 bytes long. -> only full bytes
+    // 0x80= 0b1000_0000 therefore represents the block that is always appended
     #[test]
     fn check_pads() {
         use crate::vec_u8_to_u64_and_pad;
@@ -101,6 +102,7 @@ mod test_padding {
     fn string_to_pad() {
         // to test the final padding of the function with some examples
         // examples from the pub test string example
+        // ADD!!: longer example strings
         pub const TEST_STRINGS: [&str; 6] = [
             " ", // 0x20
             "!", // 0x21
