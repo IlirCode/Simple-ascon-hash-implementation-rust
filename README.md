@@ -1,10 +1,10 @@
 # Simple-ascon-hash-implementation-rust
 A first simple implementation of ascon-hash in Rust. 
 
-**The implementation is subject to change and is a work in progress.
+**The implementation is subject to change and is a work in progress.**
 
 
-**No security review of the codebase has been done yet**.
+**No security review of the codebase has been done yet.**
 
 # Caveat 
 - All tests, including integration tests, have passed. However, integration testing needs to be extended 
