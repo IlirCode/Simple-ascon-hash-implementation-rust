@@ -53,29 +53,22 @@ Squeezing:
 
 fn main() {
     // vector used for saving the string -> entries should be size r = 64 bits
-    let mut message : Vec<u64> = Vec::new();
+    let mut message: Vec<u64> = Vec::new();
 
     // assumed that the message is a string in UTF-8 format
-    
-  
-        // numbers taken from the test for the official permutation
-        let mut s : State = State::new(
-            0x00400c0400000100,
-            0x0,
-            0x0,
-            0x0,
-            0x0)
-            .permutation_12_for();
-         
-        let s_compare = State::new(
-            0xee9398aadb67f03d, 
-            0x8bb21831c60f1002, 
-            0xb48a92db98d5da62, 
-            0x43189921b8f8e3e8, 
-            0x348fa5c9d525e140);
+    // preparing the message blocks
 
-        println!("The result is {:x} {:x} {:x} {:x} {:x}", s.x[0], s.x[1], s.x[2], s.x[3], s.x[4]);
-        println!("It shoulb be  {:x} {:x} {:x} {:x} {:x}", s_compare.x[0], s_compare.x[1], s_compare.x[2], s_compare.x[3], s_compare.x[4]);
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read input");
 
+    let output_blocks = ascon_hash(&input);
 
+    print!("hash is ");
+    for i in 0..4 {
+        print!("{:x}", output_blocks[i]);
+    }
+    print!("\n");
+    // maybe want the output_blocks as a
 }
