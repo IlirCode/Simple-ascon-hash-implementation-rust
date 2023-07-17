@@ -1,28 +1,28 @@
 # Simple-ascon-hash-implementation-rust
 A first simple implementation of ascon-hash in Rust. 
 
-**The implementation is bound to change and a work in progress**
+**The implementation is subject to change and is a work in progress.
 
 
-**no security review of the code base has been done as of now**
+**No security review of the codebase has been done yet**.
 
 # Caveat 
-- All tests, including the integration test work for now.
-- The implementation is still unoptimzed and some functions have to be adjusted.
-- The integration test only uses the string "some bytes". The solution has been taken from the lib.rs file by Sebastian Ramacher
-- the test from the file asconhash.txt do not pass
-  - here I assume my understanding of the file and test might have been flawed -> still to do
+- All tests, including integration tests, have passed. However, integration testing needs to be extended 
+- The implementation is still unoptimised and some features need to be tweaked.
+- The integration test only uses the string "some bytes". The result was taken from the lib.rs file by Sebastian Ramacher
+- the test from asconhash.txt does not pass
+  - here I assume that my understanding of the file and the test might have been wrong -> still to do
  
-# To-do
+# To do
 
-## General 
-- write a bench mark / test bench
-- make complient with https://github.com/RustCrypto/hashes/tree/master
-- security review
-- multithreading (especially the permutation function)
+## General stuff 
+- Write a benchmark / test bench
+- Comply with https://github.com/RustCrypto/hashes/tree/master
+- Security review
+- Multithreading (especially the permutation function)
 
-### for complience
-- implement the hash and hash map traits and requirements
+### for compliance
+- Implement the hash and hash map traits and requirements.
 
 ## Tests
 - implement the tests fom the file asconhash.txt
