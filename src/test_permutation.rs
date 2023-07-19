@@ -1,70 +1,71 @@
+#![allow(unused)]
+
 // Implementation from https://docs.rs/ascon/latest/ascon/ for comparison with my code
-    fn round(x: [u64; 5], c: u64) -> [u64; 5] {
-        // S-box layer
-        let x0 = x[0] ^ x[4];
-        let x2 = x[2] ^ x[1] ^ c; // with round constant
-        let x4 = x[4] ^ x[3];
-    
-        let tx0 = x0 ^ (!x[1] & x2);
-        let tx1 = x[1] ^ (!x2 & x[3]);
-        let tx2 = x2 ^ (!x[3] & x4);
-        let tx3 = x[3] ^ (!x4 & x0);
-        let tx4 = x4 ^ (!x0 & x[1]);
-       
-        let tx1 = tx1 ^ tx0;
-        let tx3 = tx3 ^ tx2;
-        let tx0 = tx0 ^ tx4;
-    
-       
-        let x0 = tx0 ^ tx0.rotate_right(9);
-        let x1 = tx1 ^ tx1.rotate_right(22);
-        let x2 = tx2 ^ tx2.rotate_right(5);
-        let x3 = tx3 ^ tx3.rotate_right(7);
-        let x4 = tx4 ^ tx4.rotate_right(34);
-        [
-            tx0 ^ x0.rotate_right(19),
-            tx1 ^ x1.rotate_right(39),
-            !(tx2 ^ x2.rotate_right(1)),
-            tx3 ^ x3.rotate_right(10),
-            tx4 ^ x4.rotate_right(7),
-        ]
-    }
-    
-    fn permute_12_theirs(mut arr: [u64; 5]) -> [u64; 5] {
-        arr = round(
+fn round(x: [u64; 5], c: u64) -> [u64; 5] {
+    // S-box layer
+    let x0 = x[0] ^ x[4];
+    let x2 = x[2] ^ x[1] ^ c; // with round constant
+    let x4 = x[4] ^ x[3];
+
+    let tx0 = x0 ^ (!x[1] & x2);
+    let tx1 = x[1] ^ (!x2 & x[3]);
+    let tx2 = x2 ^ (!x[3] & x4);
+    let tx3 = x[3] ^ (!x4 & x0);
+    let tx4 = x4 ^ (!x0 & x[1]);
+
+    let tx1 = tx1 ^ tx0;
+    let tx3 = tx3 ^ tx2;
+    let tx0 = tx0 ^ tx4;
+
+    let x0 = tx0 ^ tx0.rotate_right(9);
+    let x1 = tx1 ^ tx1.rotate_right(22);
+    let x2 = tx2 ^ tx2.rotate_right(5);
+    let x3 = tx3 ^ tx3.rotate_right(7);
+    let x4 = tx4 ^ tx4.rotate_right(34);
+    [
+        tx0 ^ x0.rotate_right(19),
+        tx1 ^ x1.rotate_right(39),
+        !(tx2 ^ x2.rotate_right(1)),
+        tx3 ^ x3.rotate_right(10),
+        tx4 ^ x4.rotate_right(7),
+    ]
+}
+
+fn permute_12_theirs(mut arr: [u64; 5]) -> [u64; 5] {
+    arr = round(
+        round(
             round(
                 round(
                     round(
                         round(
                             round(
                                 round(
-                                    round(
-                                        round(round(round(round(arr, 0xf0), 0xe1), 0xd2), 0xc3),
-                                        0xb4,
-                                    ),
-                                    0xa5,
+                                    round(round(round(round(arr, 0xf0), 0xe1), 0xd2), 0xc3),
+                                    0xb4,
                                 ),
-                                0x96,
+                                0xa5,
                             ),
-                            0x87,
+                            0x96,
                         ),
-                        0x78,
+                        0x87,
                     ),
-                    0x69,
+                    0x78,
                 ),
-                0x5a,
+                0x69,
             ),
-            0x4b,
-        );
-        arr
-    }
+            0x5a,
+        ),
+        0x4b,
+    );
+    arr
+}
 
 #[cfg(test)]
 mod test_permutations {
     pub const IV: u64 = 0x00400c0400000100;
-    use ascon_hash_implementation::State;
 
     use crate::test_permutation::{permute_12_theirs, round};
+    use crate::State;
 
     #[test]
     fn one_round() {

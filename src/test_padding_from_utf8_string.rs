@@ -1,20 +1,4 @@
-// for the implementation
 #![allow(unused)]
-pub trait StringToU8 {
-    fn string_to_u8(&self) -> Vec<u8>;
-}
-
-impl StringToU8 for &str {
-    fn string_to_u8(&self) -> Vec<u8> {
-        self.bytes().collect()
-    }
-}
-
-impl StringToU8 for String {
-    fn string_to_u8(&self) -> Vec<u8> {
-        self.as_bytes().to_vec()
-    }
-}
 #[cfg(test)]
 mod tests_strings {
     use crate::StringToU8;
@@ -124,17 +108,17 @@ mod test_padding {
         let mut calculated_output_list: Vec<Vec<u64>> = Vec::new();
         for input in TEST_STRINGS {
             let outputs = vec_u8_to_u64_and_pad(input.string_to_u8());
-            
+
             calculated_output_list.push(outputs);
         }
 
         assert_eq!(output_list, calculated_output_list);
-        
     }
 }
 
+#[cfg(test)]
 mod full_test_of_ascon_hash {
-    use crate::{ascon_hash, StringToU8};
+    use crate::ascon_hash;
 
     #[test]
     fn check() {

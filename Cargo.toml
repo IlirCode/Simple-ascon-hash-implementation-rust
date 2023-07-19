@@ -6,3 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+criterion = "0.5.1" # criterion is a library for benchmarking
+
+[[bench]]
+name = "my_benchmark"
+harness = false # no bencharking harness as we add our own 

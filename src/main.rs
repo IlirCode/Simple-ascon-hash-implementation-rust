@@ -2,18 +2,13 @@
 
 use std::io;
 
-mod test_permutation;
-use ascon_hash_implementation::State;
-use ascon_hash_implementation::ascon_hash;
-use ascon_hash_implementation::convert_pad_into_blocks;
+use ascon_hash_implementation::*;
 
+/*
+Rust implementation done in small steps
 
+DURING INITIAL DEVELOPEMENT WE ASSUME THAT THE MESSAGE M HAS BEEN PADDED
 
-/* 
-Rust implementation done in small steps 
- 
-DURING INITIAL DEVELOPEMENT WE ASSUME THAT THE MESSAGE M HAS BEEN PADDED 
- 
 The permutation function consists of submodules
 Initial vector depends on the operation mode -> here IV = 0x00400c0400000100 (Ascon-Hash-a)
 In future iterations that let the user choose the Hashing function use a struct that lets the user choose
@@ -27,7 +22,7 @@ main function responsible for managing the phases (Absorption)
 
 
 THE ASCON STEPS
-Initilization: 
+Initilization:
     - IV appended by 0's for the initial state -> S = IV || 0^256
     - IV input to the permutation function S = p^a (IV || 0^256)
 Absorbing Message:
@@ -35,7 +30,7 @@ Absorbing Message:
     - for each round except the last the Message block is XORed into the state S and used as input for the next function
         -> for the last block the p^b is not performed -> p^a will be performed in the squeezing phase
         -> HERE: p^a = p^b
-Squeezing: 
+Squeezing:
     - start with p^a(S)
     - extract the message
     - for the following we use p^b
@@ -45,11 +40,6 @@ Squeezing:
 
 // Initial Vectors ->   later:  depending on a global variable the user should be able to choose which version of hash to use
 //                              this should include the round size
-
-
-
-
-
 
 fn main() {
     // vector used for saving the string -> entries should be size r = 64 bits

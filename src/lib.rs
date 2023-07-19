@@ -1,4 +1,5 @@
 mod test_padding_from_utf8_string;
+mod test_permutation;
 //mod test_permutations;
 
 use std::fs::File;
@@ -12,7 +13,7 @@ pub const ROUND_CONSTANTS: [u64; 12] = [
 
 // 320-bit State S
 // operations are done on 5 64-bt words
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct State {
     pub x: [u64; 5], // first entry is r for us
 }
