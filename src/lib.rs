@@ -30,40 +30,44 @@ impl State {
         // the i is used for determining, which round constant is going to be used
 
         // add round constant
-        self.x[2] ^= round_constant;
-
+        //x_2 ^= round_constant;
+        let mut x_0 = self.x[0];
+        let mut x_1 = self.x[1];
+        let mut x_2 = self.x[2];
+        let mut x_3 = self.x[3];
+        let mut x_4 = self.x[4];
         // S-box
         // not sure if I'm writting in the array or constantly changing the arrays length and location
-        self.x[0] ^= self.x[4];
-        self.x[2] ^= self.x[1];
-        self.x[4] ^= self.x[3];
+        x_0 ^= x_4;
+        x_2 ^= x_1 ^ round_constant;
+        x_4 ^= x_3;
 
         // intermediate variables with x
-        let x_0: u64 = self.x[0]; // should be a copy not a borrow
-        let x_1: u64 = self.x[1];
+        let x_0_0: u64 = x_0; // should be a copy not a borrow
+        let x_1_1: u64 = x_1;
 
-        self.x[0] ^= (!self.x[1]) & self.x[2];
-        self.x[1] ^= (!self.x[2]) & self.x[3];
-        self.x[2] ^= (!self.x[3]) & self.x[4];
-        self.x[3] ^= (!self.x[4]) & x_0;
-        self.x[4] ^= (!x_0) & x_1;
+        x_0 ^= (!x_1) & x_2;
+        x_1 ^= (!x_2) & x_3;
+        x_2 ^= (!x_3) & x_4;
+        x_3 ^= (!x_4) & x_0_0;
+        x_4 ^= (!x_0_0) & x_1_1;
 
-        self.x[1] ^= self.x[0];
-        self.x[3] ^= self.x[2];
-        self.x[0] ^= self.x[4];
+        x_1 ^= x_0;
+        x_3 ^= x_2;
+        x_0 ^= x_4;
 
-        self.x[2] = !self.x[2]; // can be combined in the following linear layer by inverting the output
+        x_2 = !x_2; // can be combined in the following linear layer by inverting the output
 
         // linear layer
         // maybe better to seperate
-        self.x[0] ^= self.x[0].rotate_right(19) ^ self.x[0].rotate_right(28);
-        self.x[1] ^= self.x[1].rotate_right(61) ^ self.x[1].rotate_right(39);
-        self.x[2] ^= self.x[2].rotate_right(1) ^ self.x[2].rotate_right(6);
-        self.x[3] ^= self.x[3].rotate_right(10) ^ self.x[3].rotate_right(17);
-        self.x[4] ^= self.x[4].rotate_right(7) ^ self.x[4].rotate_right(41);
+        x_0 ^= x_0.rotate_right(19) ^ x_0.rotate_right(28);
+        x_1 ^= x_1.rotate_right(61) ^ x_1.rotate_right(39);
+        x_2 ^= x_2.rotate_right(1) ^ x_2.rotate_right(6);
+        x_3 ^= x_3.rotate_right(10) ^ x_3.rotate_right(17);
+        x_4 ^= x_4.rotate_right(7) ^ x_4.rotate_right(41);
 
         // return self
-        self
+        State::new(x_0, x_1, x_2, x_3, x_4)
     }
 
     pub fn permutation_12_for(mut self) -> Self {
