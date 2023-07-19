@@ -16,7 +16,6 @@ A first simple implementation of ascon-hash in Rust.
 # To do
 
 ## General stuff 
-- Write a benchmark / test bench
 - Comply with https://github.com/RustCrypto/hashes/tree/master
 - Security review
 - Multithreading (especially the permutation function)
@@ -38,3 +37,7 @@ A first simple implementation of ascon-hash in Rust.
   - where vectors cannot be implemented replace with VecDeque (double ended ring buffer) <br>
     $\Rightarrow$ try with and without make_contiguous
 - multithreading 
+
+## benches 
+- only a very rudementary bench has been implemented. 
+- benches setup has to be expended 
