@@ -65,7 +65,8 @@ mod test_permutations {
     pub const IV: u64 = 0x00400c0400000100;
 
     use crate::test_permutation::{permute_12_theirs, round};
-    use crate::State;
+    // use crate::State;
+    use crate::*;
 
     #[test]
     fn one_round() {
@@ -90,6 +91,51 @@ mod test_permutations {
         assert_eq!(s, s_compare);
     }
 
+    #[test]
+    fn one_round_with_tupple() {
+        // numbers taken from the test for the official permutation
+        let mut s: State = State::new(
+            0x0123456789abcdef,
+            0x23456789abcdef01,
+            0x456789abcdef0123,
+            0x6789abcdef012345,
+            0x89abcde01234567f,
+        )
+        .single_permutation_with_tupples(0x1f);
+
+        let s_compare = State::new(
+            0x3c1748c9be2892ce,
+            0x5eafb305cd26164f,
+            0xf9470254bb3a4213,
+            0xf0428daf0c5d3948,
+            0x281375af0b294899,
+        );
+
+        assert_eq!(s, s_compare);
+    }
+
+    #[test]
+    fn one_round_with_concurency() {
+        // numbers taken from the test for the official permutation
+        let mut s: State = State::new(
+            0x0123456789abcdef,
+            0x23456789abcdef01,
+            0x456789abcdef0123,
+            0x6789abcdef012345,
+            0x89abcde01234567f,
+        )
+        .single_permutation_concurrent_mutex(0x1f);
+
+        let s_compare = State::new(
+            0x3c1748c9be2892ce,
+            0x5eafb305cd26164f,
+            0xf9470254bb3a4213,
+            0xf0428daf0c5d3948,
+            0x281375af0b294899,
+        );
+
+        assert_eq!(s, s_compare);
+    }
     #[test]
     fn one_round_more() {
         // random numbers from the ascon cargo
@@ -166,6 +212,11 @@ mod test_permutations {
             their_state[4],
         );
     }
+
+    // #[test]
+    // fn pool_implementations() {
+    //     let pool = ThreadPool::new(5);
+    // }
 
     #[test]
     fn initialization_12_rounds_compair_their_result() {

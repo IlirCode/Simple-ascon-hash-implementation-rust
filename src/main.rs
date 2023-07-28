@@ -48,6 +48,9 @@ fn main() {
     // assumed that the message is a string in UTF-8 format
     // preparing the message blocks
 
+    println!(
+        "Please enter a valid UTF-8 string and confirm.\n Note that the line break is included in the string"
+    );
     let mut input = String::new();
     io::stdin()
         .read_line(&mut input)

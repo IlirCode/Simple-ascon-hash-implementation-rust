@@ -2,6 +2,7 @@
 #[cfg(test)]
 mod tests_strings {
     use crate::StringToU8;
+    // use std::io;
 
     pub const TEST_STRINGS: [&str; 6] = [
         "!", // 0x21
@@ -11,6 +12,24 @@ mod tests_strings {
         "0", // 0x30
         " ", // 0x20
     ];
+
+    // Test to confirm if the function io::stdin().read_line(&mut input) reads in the enter when
+    // taking in input
+    // CONCLUSION: it does read the \n from pressing enter to confirm the input in terminal
+
+    // testing my simple input function in main.rs
+    // #[test]
+    // fn check_input_function() {
+    //     println!("Please enter a '!' and confirm.");
+    //
+    //     // just coppied from the main function
+    //     let mut input = String::new();
+    //     io::stdin()
+    //         .read_line(&mut input)
+    //         .expect("Failed to read input");
+    //
+    // assert_eq!(input, "!");
+    // }
 
     #[test]
     fn check_bytes_vector() {
@@ -26,17 +45,34 @@ mod tests_strings {
         assert_eq!(TEST_STRINGS[3].string_to_u8()[0], 0x31);
         assert_eq!(TEST_STRINGS[4].string_to_u8()[0], 0x30);
         assert_eq!(TEST_STRINGS[5].string_to_u8()[0], 0x20);
+
+        // trait StringToU8 includes implementations for slices and entire strings straight out
+        // smae tests as those above not with to_string to make sure it is strings
+        // in reality thi should have not make a problem
+        assert_eq!((TEST_STRINGS[0].to_string()).string_to_u8()[0], 0x21);
+        assert_eq!((TEST_STRINGS[1].to_string()).string_to_u8()[0], 0x40);
+
+        // 2 bytes
+        assert_eq!((TEST_STRINGS[2].to_string()).string_to_u8()[0], 0xc2);
+        assert_eq!((TEST_STRINGS[2].to_string()).string_to_u8()[1], 0xa5);
+
+        assert_eq!((TEST_STRINGS[3].to_string()).string_to_u8()[0], 0x31);
+        assert_eq!((TEST_STRINGS[4].to_string()).string_to_u8()[0], 0x30);
+        assert_eq!((TEST_STRINGS[5].to_string()).string_to_u8()[0], 0x20);
     }
 }
 
 #[cfg(test)]
 mod test_padding {
     use crate::{vec_u8_to_u64_and_pad, StringToU8};
+
+    use crate::vec_u8_to_u64_and_pad_version_2;
     // UTF-8 can be 1 to 4 bytes long. -> only full bytes
     // 0x80= 0b1000_0000 therefore represents the block that is always appended
     #[test]
     fn check_pads() {
         use crate::vec_u8_to_u64_and_pad;
+        use crate::vec_u8_to_u64_and_pad_version_2;
         let mut input_list: Vec<Vec<u8>> = vec![
             vec![0x10],
             vec![0x00],
@@ -76,6 +112,54 @@ mod test_padding {
         let mut calculated_output_list: Vec<Vec<u64>> = Vec::new();
         for input in input_list {
             let outputs = vec_u8_to_u64_and_pad(input);
+            calculated_output_list.push(outputs);
+        }
+
+        assert_eq!(output_list, calculated_output_list);
+    }
+
+    #[test]
+    fn check_pads_version_2() {
+        use crate::vec_u8_to_u64_and_pad;
+        let mut input_list: Vec<Vec<u8>> = vec![
+            vec![0x10],
+            vec![0x00],
+            vec![0xff],
+            vec![0x0, 0x0, 0x0, 0x0, 0x1],
+            vec![0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0], // on the verge of generaing a second block
+            vec![0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0], // should generate a second block
+            vec![0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1], // ditto
+            vec![0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x01],
+            vec![0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x01],
+            vec![0xff, 0xff, 0xff, 0xff, 0xff],
+            vec![
+                0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x01,
+            ], // on the edge of not going to a third one
+            vec![
+                0x0, 0x0, 0x00, 0x0, 0x00, 0x0, 0x0, 0x01, 0x0, 0x0, 0x00, 0x0, 0x00, 0x0, 0x0,
+                0x01, 0x0, 0x0, 0x00, 0x0, 0x00, 0x0, 0x0, 0x01,
+            ], //, vec![0x0] // Test vector for failing
+        ];
+
+        // the single appended 1 is a 0x80 added to the end
+        let output_list: Vec<Vec<u64>> = vec![
+            vec![0x10_80_00_00_00_00_00_00],
+            vec![0x00_80_00_00_00_00_00_00],
+            vec![0xff_80_00_00_00_00_00_00],
+            vec![0x00_00_00_00_01_80_00_00],
+            vec![0x00_00_00_00_00_00_00_80],
+            vec![0x00, 0x80_00_00_00_00_00_00_00],
+            vec![0x01, 0x80_00_00_00_00_00_00_00],
+            vec![0x00_00_00_00_00_00_00_00, 0x01_80_00_00_00_00_00_00],
+            vec![0x00_00_00_00_00_00_00_00, 0x00_01_80_00_00_00_00_00],
+            vec![0xff_ff_ff_ff_ff_80_00_00],
+            vec![0x0, 0x1, 0x80_00_00_00_00_00_00_00],
+            vec![0x01, 0x01, 0x01, 0x80_00_00_00_00_00_00_00], //, vec![0x1] // Test vector for failing
+        ];
+
+        let mut calculated_output_list: Vec<Vec<u64>> = Vec::new();
+        for input in input_list {
+            let outputs = vec_u8_to_u64_and_pad_version_2(input);
             calculated_output_list.push(outputs);
         }
 
@@ -172,5 +256,25 @@ mod full_test_of_ascon_hash {
                 print!("\n");}
         */
         assert_eq!(compare_list, calculated_output_list);
+    }
+}
+
+#[cfg(test)]
+mod ascon_pool {
+    use crate::parallel_implementations::parallel_implementations::*;
+
+    #[test]
+    pub fn test_ascon_pool() {
+        let input: String = "some bytes".to_string();
+        let output = ascon_hash_pool(&input);
+
+        let output_compare: Vec<u64> = vec![
+            0xb742ca75e5703875,
+            0x7059cccc6874714f,
+            0x9dbd7fc5924a7df4,
+            0xe316594fd1426ca8,
+        ];
+
+        assert_eq!(output, output_compare);
     }
 }
